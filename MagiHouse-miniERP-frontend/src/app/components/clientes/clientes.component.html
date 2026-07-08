@@ -1,0 +1,126 @@
+<div class="clientes-container">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">{{ 'CLIENTES' | translate }}</h2>
+      <p class="page-subtitle">Administra los clientes de la tienda y su estado de confiabilidad.</p>
+    </div>
+    <div class="header-actions">
+      <div class="search-wrapper" role="search">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <label for="searchCliente" class="sr-only">{{ 'BUSCAR' | translate }}</label>
+        <input type="text" id="searchCliente" class="search-input" [placeholder]="'BUSCAR' | translate" [(ngModel)]="searchTerm">
+      </div>
+      <button class="btn-primary" (click)="abrirModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        {{ 'NUEVO_CLIENTE' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="glass-panel table-panel">
+    <div class="table-container">
+      <table class="premium-table">
+        <caption class="sr-only">Lista de clientes registrados</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ 'DNI' | translate }}</th>
+            <th scope="col">{{ 'NOMBRES' | translate }}</th>
+            <th scope="col">{{ 'CELULAR' | translate }}</th>
+            <th scope="col">{{ 'DIRECCION' | translate }}</th>
+            <th scope="col">{{ 'ESTADO' | translate }}</th>
+            <th scope="col">{{ 'ACCIONES' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody aria-live="polite">
+          <tr *ngIf="clientesFiltrados.length === 0">
+            <td colspan="6" class="text-center empty-state">No se encontraron clientes.</td>
+          </tr>
+          <tr *ngFor="let cliente of clientesFiltrados">
+            <td class="id-col">{{ cliente.dni }}</td>
+            <td class="name-col">{{ cliente.nombresCliente }} {{ cliente.apellidosCliente }}</td>
+            <td class="desc-col">{{ cliente.numCelular || '-' }}</td>
+            <td>{{ cliente.direccion || 'No especificada' }}</td>
+            <td>
+              <span class="category-badge">{{ cliente.nombreEstadoCliente }}</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-icon" [attr.aria-label]="'Editar cliente ' + cliente.nombresCliente" title="Editar" (click)="editarCliente(cliente)">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                </button>
+                <button class="btn-icon" style="color: #ff4757;" [attr.aria-label]="'Eliminar cliente ' + cliente.nombresCliente" title="Eliminar" (click)="eliminarCliente(cliente.idCliente!)">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FOR NEW CLIENTE -->
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-content glass-panel">
+    <div class="modal-header">
+      <h3 class="modal-title">Registrar Nuevo Cliente</h3>
+      <button class="btn-close" (click)="cerrarModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+      
+      <div class="form-group">
+        <label for="dniCliente">DNI</label>
+        <input type="text" id="dniCliente" class="form-input" [(ngModel)]="nuevoCliente.dni" placeholder="Ej. 12345678" maxlength="8">
+      </div>
+
+      <div class="form-row" style="display: flex; gap: 15px;">
+        <div class="form-group" style="flex: 1;">
+          <label for="nombresCliente">Nombres</label>
+          <input type="text" id="nombresCliente" class="form-input" [(ngModel)]="nuevoCliente.nombresCliente" placeholder="Nombres">
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="apellidosCliente">Apellidos</label>
+          <input type="text" id="apellidosCliente" class="form-input" [(ngModel)]="nuevoCliente.apellidosCliente" placeholder="Apellidos">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="celCliente">Celular</label>
+        <input type="text" id="celCliente" class="form-input" [(ngModel)]="nuevoCliente.numCelular" placeholder="Ej. 987654321">
+      </div>
+
+      <div class="form-group">
+        <label for="dirCliente">Dirección</label>
+        <input type="text" id="dirCliente" class="form-input" [(ngModel)]="nuevoCliente.direccion" placeholder="Av. Principal 123">
+      </div>
+
+      <div class="form-group">
+        <label for="estadoCliente">Estado de Cliente</label>
+        <select id="estadoCliente" class="form-input" [(ngModel)]="nuevoCliente.idEstadoCliente">
+          <option [value]="0" disabled selected>Seleccione un estado</option>
+          <option *ngFor="let estado of estados" [value]="estado.idEstadoCliente">
+            {{ estado.nombreEstadoCliente }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="chkDni" [(ngModel)]="nuevoCliente.dniDevuelto">
+        <label for="chkDni">¿DNI ya fue devuelto?</label>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" (click)="guardarCliente()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Guardando...' : 'Guardar Cliente' }}
+      </button>
+    </div>
+  </div>
+</div>

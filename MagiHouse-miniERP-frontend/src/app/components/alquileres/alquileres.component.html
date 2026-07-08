@@ -1,0 +1,192 @@
+<div class="alquileres-container">
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">{{ 'ALQUILERES' | translate }}</h2>
+      <p class="page-subtitle">Registra nuevos alquileres y visualiza el historial de rentas.</p>
+    </div>
+    <div class="header-actions">
+      <div class="search-wrapper" role="search">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <label for="searchAlquiler" class="sr-only">{{ 'BUSCAR' | translate }}</label>
+        <input type="text" id="searchAlquiler" class="search-input" [placeholder]="'BUSCAR' | translate" [(ngModel)]="searchTerm">
+      </div>
+      <button class="btn-secondary" (click)="exportarExcel()" style="margin-right: 10px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/><path d="M14 3v5h5M16 13H8M16 17H8M10 9H8"/></svg>
+        {{ 'EXPORTAR' | translate }}
+      </button>
+      <button class="btn-primary" (click)="abrirModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        {{ 'NUEVO_ALQUILER' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="glass-panel table-panel">
+    <div class="table-container">
+      <table class="premium-table">
+        <caption class="sr-only">Lista de alquileres</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ 'ID' | translate }}</th>
+            <th scope="col">{{ 'CLIENTE' | translate }}</th>
+            <th scope="col">{{ 'METODO_PAGO' | translate }}</th>
+            <th scope="col">{{ 'FECHA_ALQUILER' | translate }}</th>
+            <th scope="col">{{ 'FECHA_DEVOLUCION' | translate }}</th>
+            <th scope="col">{{ 'TOTAL' | translate }}</th>
+            <th scope="col">{{ 'ESTADO' | translate }}</th>
+            <th scope="col">{{ 'ACCIONES' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody aria-live="polite">
+          <tr *ngIf="alquileresFiltrados.length === 0">
+            <td colspan="8" class="text-center empty-state">No se encontraron alquileres.</td>
+          </tr>
+          <tr *ngFor="let alq of alquileresFiltrados">
+            <td class="id-col">#{{ alq.idAlquiler }}</td>
+            <td class="name-col">{{ alq.nombresCliente }} {{ alq.apellidosCliente }}</td>
+            <td><span class="category-badge">{{ alq.nombreMetodoPago }}</span></td>
+            <td>{{ alq.fechaAlquiler }}</td>
+            <td>{{ alq.fechaPactada }}</td>
+            <td class="name-col">S/ {{ alq.total | number:'1.2-2' }}</td>
+            <td>
+              <span class="status-badge" [class.active]="alq.estaActivo" [class.inactive]="!alq.estaActivo">
+                {{ alq.estaActivo ? 'En Curso' : 'Devuelto' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-icon" [attr.aria-label]="'Ver detalles del alquiler ' + alq.idAlquiler" title="Ver Detalles" (click)="verDetalles(alq)">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="btn-icon" style="color: #10b981;" [attr.aria-label]="'Devolver alquiler ' + alq.idAlquiler" title="Devolver (Normal)" *ngIf="alq.estaActivo" (click)="devolverAlquiler(alq.idAlquiler!)">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                </button>
+                <button class="btn-icon" style="color: #f59e0b;" [attr.aria-label]="'Reportar daño en alquiler ' + alq.idAlquiler" title="Reportar Daño" *ngIf="alq.estaActivo" (click)="devolverAlquilerDanado(alq.idAlquiler!)">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </button>
+                <button class="btn-icon" style="color: #ff4757;" [attr.aria-label]="'Eliminar alquiler ' + alq.idAlquiler" title="Eliminar" (click)="eliminarAlquiler(alq.idAlquiler!)">
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                </button>
+                <button class="btn-secondary btn-sm" title="Generar Ticket PDF" (click)="generarTicketPDF(alq)" style="margin-left: 5px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FOR NEW ALQUILER -->
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal-content glass-panel modal-lg">
+    <div class="modal-header">
+      <h3 class="modal-title">Registrar Nuevo Alquiler</h3>
+      <button class="btn-close" (click)="cerrarModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+      
+      <div class="form-row" style="display: flex; gap: 15px; margin-bottom: 20px;">
+        <div class="form-group" style="flex: 1;">
+          <label for="clienteAlquiler">Cliente</label>
+          <select id="clienteAlquiler" class="form-input" [(ngModel)]="nuevoAlquiler.idCliente">
+            <option [value]="0" disabled selected>Seleccione un cliente...</option>
+            <option *ngFor="let cli of clientes" [value]="cli.idCliente">{{ cli.dni }} - {{ cli.nombresCliente }} {{ cli.apellidosCliente }}</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label for="fechaPactada">Fecha de Devolución</label>
+          <input type="date" id="fechaPactada" class="form-input" [(ngModel)]="nuevoAlquiler.fechaPactada">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="metodoPagoAlq">Método de Pago</label>
+        <select id="metodoPagoAlq" class="form-input" [(ngModel)]="nuevoAlquiler.idMetodoPago">
+          <option [value]="0" disabled selected>Seleccione un método</option>
+          <option *ngFor="let mp of metodosPago" [value]="mp.idMetodoPago">{{ mp.nombreMetodoPago }}</option>
+        </select>
+      </div>
+
+      <!-- SECCION DE DETALLES -->
+      <div class="detalles-section">
+        <h4>Disfraces a Alquilar</h4>
+        
+        <div class="add-detalle-row">
+          <select [(ngModel)]="selectedModeloId" class="form-input" name="idModelo">
+            <option [value]="0" disabled selected>Buscar Modelo de Disfraz...</option>
+            <option *ngFor="let mod of modelos" [value]="mod.idModeloDisfraz" [disabled]="mod.stockDisponible === 0">
+              {{ mod.nombreModelo }} (Stock: {{ mod.stockDisponible }}) - S/ {{ mod.precioAlquiler | number:'1.2-2' }}
+            </option>
+          </select>
+          <button class="btn-secondary" (click)="agregarDetalle()">Añadir</button>
+        </div>
+
+        <div class="detalles-list" *ngIf="nuevoAlquiler.detalles.length > 0">
+          <div class="detalle-item" *ngFor="let det of nuevoAlquiler.detalles; let i = index">
+            <div class="detalle-info">
+              <strong>{{ getNombreModelo(det.idModeloDisfraz) }}</strong>
+              <div style="display: flex; gap: 10px; align-items: center; margin-top: 5px;">
+                <label>Precio Base S/</label>
+                <input type="number" class="form-input mini-input" [(ngModel)]="det.precioUnitarioAlquiler" (change)="calcularTotal()">
+              </div>
+            </div>
+            <div class="detalle-inputs">
+              <div class="mini-group">
+                <label>Descuento S/</label>
+                <input type="number" class="form-input mini-input" [(ngModel)]="det.descuentoPorMayor" (change)="calcularTotal()">
+              </div>
+              <button class="btn-icon delete-btn" (click)="quitarDetalle(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="total-section">
+          <span>Total a Pagar:</span>
+          <span class="total-amount">S/ {{ nuevoAlquiler.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn-primary" (click)="guardarAlquiler()" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Procesando...' : 'Completar Alquiler' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE DETALLES -->
+<div class="modal-backdrop" *ngIf="showModalDetalles && alquilerSeleccionado">
+  <div class="modal-content glass-panel modal-md">
+    <div class="modal-header">
+      <h3 class="modal-title">Detalles del Alquiler #{{ alquilerSeleccionado.idAlquiler }}</h3>
+      <button class="btn-close" (click)="cerrarModalDetalles()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <p><strong>Cliente:</strong> {{ alquilerSeleccionado.nombresCliente }} {{ alquilerSeleccionado.apellidosCliente }}</p>
+      <p><strong>Fecha Alquiler:</strong> {{ alquilerSeleccionado.fechaAlquiler }}</p>
+      <p><strong>Devolución Pactada:</strong> {{ alquilerSeleccionado.fechaPactada }}</p>
+      <p><strong>Estado:</strong> {{ alquilerSeleccionado.estaActivo ? 'En Curso' : 'Devuelto / Finalizado' }}</p>
+      <p><strong>Total:</strong> S/ {{ alquilerSeleccionado.total | number:'1.2-2' }}</p>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="cerrarModalDetalles()">Cerrar</button>
+    </div>
+  </div>
+</div>

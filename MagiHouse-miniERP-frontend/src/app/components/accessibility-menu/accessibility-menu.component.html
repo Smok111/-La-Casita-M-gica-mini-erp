@@ -1,0 +1,66 @@
+<!-- Floating Action Button -->
+<button class="a11y-fab" (click)="toggleMenu()" [attr.aria-label]="'ACCESIBILIDAD' | translate" [class.active]="isOpen">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+</button>
+
+<!-- Menu Overlay -->
+<div class="a11y-menu-overlay" *ngIf="isOpen" (click)="toggleMenu()">
+  <div class="a11y-menu glass-panel" (click)="$event.stopPropagation()">
+    
+    <div class="a11y-header">
+      <h3>{{ 'ACCESIBILIDAD' | translate }}</h3>
+      <button class="btn-close" (click)="toggleMenu()" aria-label="Cerrar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="a11y-section">
+      <h4 class="section-title">{{ 'IDIOMA' | translate }}</h4>
+      <div class="lang-switcher">
+        <button [class.active]="a11y.currentLanguage() === 'es'" (click)="setLanguage('es')">Español</button>
+        <button [class.active]="a11y.currentLanguage() === 'en'" (click)="setLanguage('en')">English</button>
+        <button [class.active]="a11y.currentLanguage() === 'qu'" (click)="setLanguage('qu')">Quechua</button>
+      </div>
+    </div>
+
+    <hr class="a11y-divider">
+
+    <div class="a11y-section">
+      <h4 class="section-title">{{ 'PERFILES_ACCESIBILIDAD' | translate }}</h4>
+      <div class="a11y-grid">
+        
+        <!-- High Contrast / Ceguera -->
+        <div class="a11y-card" [class.active]="a11y.highContrast()" (click)="a11y.toggleHighContrast()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+          <span>{{ 'CEGUERA' | translate }}</span>
+        </div>
+
+        <!-- Saturation -->
+        <div class="a11y-card" [class.active]="a11y.saturation()" (click)="a11y.toggleSaturation()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+          <span>{{ 'SATURACION' | translate }}</span>
+        </div>
+
+        <!-- Dyslexia Font -->
+        <div class="a11y-card" [class.active]="a11y.dyslexiaFont()" (click)="a11y.toggleDyslexia()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+          <span>{{ 'DISLEXIA' | translate }}</span>
+        </div>
+
+        <!-- Large Cursor -->
+        <div class="a11y-card" [class.active]="a11y.largeCursor()" (click)="a11y.toggleLargeCursor()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></svg>
+          <span>{{ 'TDAH' | translate }}</span>
+        </div>
+
+        <!-- Text Spacing -->
+        <div class="a11y-card" [class.active]="a11y.textSpacing()" (click)="a11y.toggleSpacing()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v18"/><path d="m4 7 4-4 4 4"/><path d="m4 17 4 4 4-4"/><path d="M20 3v18"/><path d="m16 7 4-4 4 4"/><path d="m16 17 4 4 4-4"/></svg>
+          <span>{{ 'ESPACIADO' | translate }}</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

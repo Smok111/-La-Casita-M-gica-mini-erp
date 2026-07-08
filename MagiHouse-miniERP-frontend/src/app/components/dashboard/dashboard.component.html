@@ -1,0 +1,91 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">{{ 'RESUMEN' | translate }}</h2>
+    <p class="dashboard-subtitle">Aquí tienes un vistazo general del negocio MagiHouse al día de hoy.</p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="kpi-grid">
+    <div class="kpi-card" *ngFor="let kpi of kpiStats; let i = index" [style.--delay]="i">
+      <div class="kpi-icon-wrapper" [style.color]="kpi.color" [style.backgroundColor]="kpi.color + '20'">
+        <!-- Dynamic Icons based on title -->
+        <svg aria-hidden="true" *ngIf="kpi.icon === 'clock'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg aria-hidden="true" *ngIf="kpi.icon === 'package'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        <svg aria-hidden="true" *ngIf="kpi.icon === 'users'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <svg aria-hidden="true" *ngIf="kpi.icon === 'trending-up'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-value">{{ kpi.value }}</span>
+        <span class="kpi-title">{{ kpi.title }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lower Section: Chart & Table -->
+  <div class="dashboard-content-grid">
+    <div class="glass-panel chart-panel">
+      <h3 class="panel-title">{{ 'INGRESOS' | translate }}</h3>
+      <div style="height: 300px; width: 100%;">
+        <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Pie Chart Panel -->
+    <div class="glass-panel chart-panel" style="animation-delay: 0.6s;">
+      <h3 class="panel-title">{{ 'TOP_DISFRACES' | translate }}</h3>
+      <div style="height: 300px; width: 100%; display: flex; justify-content: center;">
+        <canvas baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Recent Activity Table -->
+    <div class="glass-panel table-panel" style="animation-delay: 0.8s;">
+      <div class="panel-header">
+        <h3 class="panel-title">{{ 'ACTIVIDAD' | translate }}</h3>
+        <button class="view-all-btn">{{ 'VER_DETALLES' | translate }}</button>
+      </div>
+      
+      <div class="table-container">
+        <table class="recent-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'ID' | translate }}</th>
+              <th scope="col">{{ 'CLIENTE' | translate }}</th>
+              <th scope="col">{{ 'CATEGORIA' | translate }}</th>
+              <th scope="col">{{ 'ESTADO' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let activity of recentActivities">
+              <td class="id-col">{{ activity.id }}</td>
+              <td>
+                <div class="client-info">
+                  <span class="client-name">{{ activity.customer }}</span>
+                  <span class="activity-date">{{ activity.date }}</span>
+                </div>
+              </td>
+              <td>{{ activity.item }}</td>
+              <td>
+                <span class="status-badge" 
+                  [class.delivered]="activity.status === 'Entregado'"
+                  [class.pending]="activity.status === 'Pendiente'"
+                  [class.paid]="activity.status === 'Pagado'"
+                  [class.returned]="activity.status === 'Devuelto'">
+                  {{ activity.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

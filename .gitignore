@@ -1,0 +1,31 @@
+# Eclipse / IDE
+.metadata/
+.settings/
+.project
+.classpath
+*.launch
+*.prefs
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Maven build
+MagicHouse-miniERP/target/
+
+# Angular build
+MagiHouse-miniERP-frontend/dist/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Temp files
+*.tmp
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
