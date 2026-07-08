@@ -12,20 +12,28 @@ Tu PC necesita tener instalado lo siguiente:
 | **Java JDK** | 17 o superior | https://www.oracle.com/java/technologies/downloads/ |
 | **Node.js** | 18 o superior | https://nodejs.org/ |
 | **MariaDB** o **MySQL** | Cualquier versión reciente | https://mariadb.org/download/ |
-| **Git** | Cualquier versión | https://git-scm.com/downloads |
 
-> ⚠️ **IMPORTANTE:** Después de instalar Java, Node.js y Git, **reinicia tu computadora** antes de continuar.
+> ⚠️ **IMPORTANTE:** Después de instalar Java y Node.js, **reinicia tu computadora** antes de continuar.
 
 ---
 
-## 📥 PASO 1: Clonar el proyecto
+## 📥 PASO 1: Descargar el proyecto
 
-Abre **CMD** o **PowerShell** y escribe:
+1. Abre tu navegador y ve a:
+   👉 **https://github.com/Smok111/-La-Casita-M-gica-mini-erp**
 
-```
-git clone https://github.com/Smok111/-La-Casita-M-gica-mini-erp.git
-cd -La-Casita-M-gica-mini-erp
-```
+2. Haz clic en el botón verde **`< > Code`** (arriba a la derecha del listado de archivos)
+
+3. En el menú que aparece, haz clic en **`Download ZIP`**
+
+4. Guarda el ZIP donde quieras (por ejemplo, en el Escritorio)
+
+5. Haz **clic derecho** sobre el ZIP descargado → **Extraer todo...**
+
+6. Extrae la carpeta. Quedará algo como:
+   ```
+   -La-Casita-M-gica-mini-erp-main/
+   ```
 
 ---
 
@@ -47,7 +55,8 @@ USE MagicHouseDB;
 
 Si tu MySQL/MariaDB tiene una contraseña diferente a `123456789a`, debes editarlo:
 
-1. Abre el archivo: `MagicHouse-miniERP/src/main/resources/application.properties`
+1. Abre el archivo: `📂 carpeta extraída → MagicHouse-miniERP → src → main → resources → application.properties`
+   (puedes abrirlo con el Bloc de notas)
 2. Cambia estas líneas con tu usuario y contraseña reales:
 
 ```properties
@@ -59,17 +68,20 @@ spring.datasource.password=TU_CONTRASEÑA_AQUI
 
 ## ⚙️ PASO 3: Iniciar el Backend (Java/Spring Boot)
 
-Abre una **nueva ventana de CMD** y ejecuta:
-
 **En Windows:**
+1. Abre la carpeta extraída
+2. Entra a la carpeta **`MagicHouse-miniERP`**
+3. En la barra de direcciones del Explorador de archivos, escribe `cmd` y presiona **Enter**
+   *(esto abre CMD ya dentro de esa carpeta)*
+4. Escribe el siguiente comando y presiona **Enter**:
+
 ```
-cd -La-Casita-M-gica-mini-erp\MagicHouse-miniERP
 mvnw.cmd spring-boot:run
 ```
 
 **En Mac/Linux:**
 ```
-cd -La-Casita-M-gica-mini-erp/MagicHouse-miniERP
+cd ruta/a/la/carpeta/-La-Casita-M-gica-mini-erp-main/MagicHouse-miniERP
 chmod +x mvnw
 ./mvnw spring-boot:run
 ```
@@ -83,11 +95,19 @@ chmod +x mvnw
 
 ## 🎨 PASO 4: Iniciar el Frontend (Angular)
 
-Abre **otra ventana de CMD** (sin cerrar la del backend) y ejecuta:
+**Sin cerrar la ventana del backend**, abre **otra ventana de CMD**:
+
+1. Vuelve a la carpeta extraída
+2. Entra a la carpeta **`MagiHouse-miniERP-frontend`**
+3. En la barra de direcciones del Explorador, escribe `cmd` y presiona **Enter**
+4. Ejecuta estos dos comandos (uno por uno):
 
 ```
-cd -La-Casita-M-gica-mini-erp\MagiHouse-miniERP-frontend
 npm install
+```
+*(esto tarda unos minutos la primera vez, es normal)*
+
+```
 npm run start
 ```
 
@@ -136,16 +156,20 @@ Inicia sesión con:
 
 ## 📁 Estructura del proyecto
 
+Al extraer el ZIP verás esta estructura:
+
 ```
--La-Casita-M-gica-mini-erp/
+-La-Casita-M-gica-mini-erp-main/
 │
 ├── MagicHouse-miniERP/          ← Backend (Java + Spring Boot)
 │   ├── src/
 │   └── pom.xml
 │
-└── MagiHouse-miniERP-frontend/  ← Frontend (Angular)
-    ├── src/
-    └── package.json
+├── MagiHouse-miniERP-frontend/  ← Frontend (Angular)
+│   ├── src/
+│   └── package.json
+│
+└── INSTRUCCIONES.md             ← Este archivo
 ```
 
 ---
